@@ -1,29 +1,6 @@
 <template>
   <v-app id="app">
-    <v-navigation-drawer
-      fixed
-      v-model="drawer"
-      app
-    >
-      <v-list dense>
-       <v-list-tile @click="">
-         <v-list-tile-action>
-           <v-icon>home</v-icon>
-         </v-list-tile-action>
-         <v-list-tile-content>
-           <v-list-tile-title>Home</v-list-tile-title>
-         </v-list-tile-content>
-       </v-list-tile>
-       <v-list-tile @click="">
-         <v-list-tile-action>
-           <v-icon>contact_mail</v-icon>
-         </v-list-tile-action>
-         <v-list-tile-content>
-           <v-list-tile-title>ログアウト</v-list-tile-title>
-         </v-list-tile-content>
-       </v-list-tile>
-     </v-list>
-   </v-navigation-drawer>
+   <navdrawer :drawer="drawer" />
    <v-toolbar color="indigo" dark fixed app>
        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
        <v-toolbar-title>{{ msg }}</v-toolbar-title>
@@ -31,6 +8,7 @@
   <v-content>
     <v-container fluid fill-height>
       <v-layout justify-center align-center>
+        <money-simulation />
       </v-layout>
     </v-container>
   </v-content>
@@ -41,11 +19,14 @@
 </template>
 
 <script>
+import NavigationDrawer from './components/NavigationDrawer.vue'
+import MoneySimulation from './components/MoneySimulation.vue'
 export default {
   name: 'app',
+  components: { 'navdrawer': NavigationDrawer, 'money-simulation': MoneySimulation },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      msg: '貯金シミュレーション',
       drawer: false
     }
   }
