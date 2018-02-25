@@ -11,9 +11,10 @@ get '/' do
   if authorize?
     set_consumer
     m = zaim_client.get("#{API_URL}home/money")
-    "now get your money! #{JSON.parse(m.body)}"
+    @m = JSON.parse(m.body)
+    erb :index
   else
-    "hello world!"
+    erb :index
   end
 end
 
