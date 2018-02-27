@@ -23,7 +23,7 @@
   <v-layout row wrap>
     <money-table title="収入" :items="moneys['income']" :categories="categories['income']" @modify="modifyIncome" />
     <v-spacer></v-spacer>
-    <money-table title="支出" :items="moneys['payment']" :categories="categories['payment']" />
+    <money-table title="支出" :items="moneys['payment']" :categories="categories['payment']" @modify="modifyPayment"/>
   </v-layout>
 </div>
 </template>
@@ -53,12 +53,17 @@ export default {
       this.moneys = moneys;
     },
     modifyIncome: function(updates){
-      let income = this.moneys['income'];
+      this.modifyMoney('income', updates);
+    },
+    modifyPayment: function(updates){
+      this.modifyMoney('payment', updates);
+    },
+    modifyMoney: function(type, updates){
+      let income = this.moneys[type];
       let i = 0;
       for(let money of income) {
         if(updates[money[0]]){
-          this.$set(this.moneys['income'][i], 1, parseInt(updates[money[0]]));
-          // this.moneys['income'][i][1] = parseInt(updates[money[0]]);
+          this.$set(this.moneys[type][i], 1, parseInt(updates[money[0]]));
         }
         i++;
       }

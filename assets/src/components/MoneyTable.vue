@@ -12,13 +12,13 @@
        <td>{{ props.item.category.name }}</td>
        <td class="text-xs-right">
          <v-edit-dialog
-           :return-value.sync="items_for_modify[props.item.id]"
            lazy
          > {{ props.item.amount }}
            <v-text-field
              slot="input"
              label="Edit"
              v-model="props.item.amount"
+             @blur="update_money(props.item.id, $event)"
              single-line
              counter
            ></v-text-field>
@@ -34,7 +34,12 @@
 export default {
   name: 'money-table',
   props: ['value', 'title', 'items', 'categories'],
-  data () {
+  methods: {
+    update_money: function(id, event){
+      this.$set(this.items_for_modify, id, event.target.value);
+    }
+  },
+  data() {
     return {
       items_for_modify: {},
       headers: [

@@ -20,7 +20,7 @@
 export default {
   name: 'resulttable',
   components: { },
-  props: ['target', 'income', 'payment', 'days'],
+  props: ['target', 'income', 'payment', 'days', 'moneys'],
   methods: {
     balance2: function(){
       let balance = 0;
@@ -67,13 +67,11 @@ export default {
       }
     },
     results: {
-      cache: false,
       get: function(){
-        console.log('hello');
         let balance_result = {
             value: false,
             name: '指定した期間の収支',
-            text: this.balance2() + "円"
+            text: this.balance + "円"
           };
         let road_result = {
           value: false,
