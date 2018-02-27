@@ -85,8 +85,17 @@ end
 def fetch_money_by_genre
   payment = {}
   income = {}
-  m = zaim_client.get("#{API_URL}home/money")
+
+  q_p = {group_by: 'receipt_id', start_date: params[:start_date], end_date: params[:end_date]}
+  m = zaim_client.get("#{API_URL}home/money?#{URI.encode_www_form(q_p)}")
   res = JSON.parse(m.body)
+
+  if res['money'].count < 1
+    halt 400, JSON.generate({})
+  end
+
+  dates =  res['money'].map{|r| Date.parse(r['date'])}
+  days = (dates.max - dates.min).to_i
   res['money'].each do |m|
     if m['mode'] == 'payment'
       payment = set_amount_by_category(payment, m)
@@ -95,7 +104,7 @@ def fetch_money_by_genre
     end
   end
 
-  JSON.generate({payment: payment.to_a, income: income.to_a})
+  JSON.generate({payment: payment.to_a, income: income.to_a, days: days})
 end
 
 def set_amount_by_category(r, m)

@@ -6,6 +6,7 @@
      :categories="categories"
      hide-actions
      class="elevation-1"
+     v-if="items.length > 1"
    >
      <template slot="items" slot-scope="props">
        <td>{{ props.item.category.name }}</td>

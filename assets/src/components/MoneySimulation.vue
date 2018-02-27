@@ -16,22 +16,10 @@
     <v-spacer></v-spacer>
     <sync-button :start_date="start_date" :end_date="end_date" @on_sync="syncMoney" />
   </v-layout>
-  <v-layout raw wrap>
-    <v-flex xs11 sm10>
-    <v-data-table
-       hide-headers
-       :items="results"
-       hide-actions
-       class="elevation-1"
-     >
-       <template slot="items" slot-scope="props">
-         <td>{{ props.item.name }}</td>
-         <td class="text-xs-right">{{ props.item.text }}</td>
-       </template>
-    </v-data-table>
-    </v-flex>
+  <v-layout raw warp>
+    <result-table :moneys="moneys" :target="target" />
   </v-layout>
-  <br />  
+  <br />
   <v-layout row wrap>
     <money-table title="収入" :items="moneys['income']" :categories="categories['income']" />
     <v-spacer></v-spacer>
@@ -44,11 +32,12 @@
 import DatePicker from './DatePicker.vue'
 import SyncButton from './SyncButton.vue'
 import MoneyTable from './MoneyTable.vue'
+import ResultTable from './ResultTable.vue'
 import axios from 'axios'
 
 export default {
   name: 'money',
-  components: { 'datepicker': DatePicker, 'sync-button': SyncButton, 'money-table': MoneyTable },
+  components: { 'datepicker': DatePicker, 'sync-button': SyncButton, 'money-table': MoneyTable, 'result-table': ResultTable },
   beforeMount: function(){
     let that = this;
     axios.get('/zaim/category')

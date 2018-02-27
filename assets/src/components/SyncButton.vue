@@ -3,7 +3,7 @@
     color="info"
     :loading="loading"
     @click.native="getMoney"
-    :disabled="loading"
+    :disabled="!syncEnable"
   >
     データ取得
     <span slot="loader" class="custom-loader">
@@ -25,6 +25,11 @@ export default {
       moneys: []
     }
   },
+  computed: {
+    syncEnable: function(){
+      return this.start_date && this.end_date && !this.loading
+    }
+  },
   methods: {
     getMoney: function(){
       // @click.native="loader = 'loading'"
@@ -44,7 +49,7 @@ export default {
         that.loader = null;
       })
       .catch(function (error) {
-        console.log(error);
+        window.alert("エラーが発生しました")
         that.loading = false;
         that.loader = null;
       });
