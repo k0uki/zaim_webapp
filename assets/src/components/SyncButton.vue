@@ -2,7 +2,7 @@
   <v-btn
     color="info"
     :loading="loading"
-    @click.native="loader = 'loading'"
+    @click.native="getMoney"
     :disabled="loading"
   >
     データ取得
@@ -13,24 +13,42 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'syncbutton',
-  props: ['value'],
+  props: ['value', 'start_date', 'end_date'],
   data () {
     return {
       loader: null,
-      loading: false
+      loading: false,
+      moneys: []
     }
   },
-  watch: {
-        loader () {
-          const l = this.loader
-          this[l] = !this[l]
-
-          setTimeout(() => (this[l] = false), 3000)
-
-          this.loader = null
-        }
+  methods: {
+    getMoney: function(){
+      // @click.native="loader = 'loading'"
+      this.loader = true;
+      this.loading = true;
+      let that = this;
+      axios.get('/zaim/money', {
+          params: {
+            start_date: this.start_date,
+            end_date: this.end_date
+          }
+      })
+      .then(function (response) {
+        that.moneys = response.data;
+        that.$emit('on_sync', that.moneys);
+        that.loading = false;
+        that.loader = null;
+      })
+      .catch(function (error) {
+        console.log(error);
+        that.loading = false;
+        that.loader = null;
+      });
+    }
   }
 }
 </script>

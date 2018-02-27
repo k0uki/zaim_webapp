@@ -9,13 +9,20 @@ set :public_folder, File.dirname(__FILE__) + '/public'
 
 get '/' do
   if authorize?
-    set_consumer
-    m = zaim_client.get("#{API_URL}home/money")
-    @m = JSON.parse(m.body)
     erb :index
   else
-    erb :index
+    "please auth from zaim at /auth"
   end
+end
+
+get '/zaim/money' do
+  set_consumer
+  fetch_money_by_genre
+end
+
+get '/zaim/category' do
+  set_consumer
+  fetch_category
 end
 
 get '/auth' do
@@ -59,4 +66,44 @@ end
 
 def zaim_client
   @client ||= OAuth::AccessToken.new(@consumer, session[:access_token], session[:access_secret])
+end
+
+def fetch_category
+  m = zaim_client.get("#{API_URL}home/category")
+  res = JSON.parse(m.body)
+  payment = {}
+  res['categories'].select{|r|r['mode'] == 'payment'}.each do |r|
+    payment[r['id']] = {name: r['name'], sort: r['sort']}
+  end
+  income = {}
+  res['categories'].select{|r|r['mode'] == 'income'}.each do |r|
+    income[r['id']] = {name: r['name'], sort: r['sort']}
+  end
+  JSON.generate({payment:payment, income: income})
+end
+
+def fetch_money_by_genre
+  payment = {}
+  income = {}
+  m = zaim_client.get("#{API_URL}home/money")
+  res = JSON.parse(m.body)
+  res['money'].each do |m|
+    if m['mode'] == 'payment'
+      payment = set_amount_by_category(payment, m)
+    elsif m['mode'] == 'income'
+      income = set_amount_by_category(income, m)
+    end
+  end
+
+  JSON.generate({payment: payment.to_a, income: income.to_a})
+end
+
+def set_amount_by_category(r, m)
+  category_id = m['category_id']
+  if r.has_key?(category_id)
+    r[category_id] += m['amount']
+  else
+    r[category_id] = m['amount']
+  end
+  r
 end

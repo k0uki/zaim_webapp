@@ -14,14 +14,8 @@
     <v-spacer></v-spacer>
     <datepicker label="終了" v-model="end_date" />
     <v-spacer></v-spacer>
-    <sync-button />
+    <sync-button :start_date="start_date" :end_date="end_date" @on_sync="syncMoney" />
   </v-layout>
-  <v-layout row wrap>
-    <money-table title="収入" :items="moneys" />
-    <v-spacer></v-spacer>
-    <money-table title="支出" :items="moneys" />
-  </v-layout>
-  <br />
   <v-layout raw wrap>
     <v-flex xs11 sm10>
     <v-data-table
@@ -37,6 +31,12 @@
     </v-data-table>
     </v-flex>
   </v-layout>
+  <br />  
+  <v-layout row wrap>
+    <money-table title="収入" :items="moneys['income']" :categories="categories['income']" />
+    <v-spacer></v-spacer>
+    <money-table title="支出" :items="moneys['payment']" :categories="categories['payment']" />
+  </v-layout>
 </div>
 </template>
 
@@ -44,29 +44,36 @@
 import DatePicker from './DatePicker.vue'
 import SyncButton from './SyncButton.vue'
 import MoneyTable from './MoneyTable.vue'
+import axios from 'axios'
 
 export default {
   name: 'money',
   components: { 'datepicker': DatePicker, 'sync-button': SyncButton, 'money-table': MoneyTable },
+  beforeMount: function(){
+    let that = this;
+    axios.get('/zaim/category')
+    .then(function (response) {
+      that.categories = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  },
+  methods: {
+    syncMoney: function(moneys){
+      this.moneys = moneys;
+    }
+  },
   data () {
     return {
       start_date: null,
       end_date: null,
       target: 50,
-      moneys: [
-                 {
-                   value: false,
-                   name: 'Frozen Yogurt',
-                   calories: 159,
-                   fat: 6.0,
-                 },
-                 {
-                   value: false,
-                   name: 'Ice cream sandwich',
-                   calories: 237,
-                   fat: 9.0
-                 }
-     ],
+      categories: {},
+      moneys: {
+        'payment': [],
+        'income': []
+      },
      results: [
                 {
                   value: false,
