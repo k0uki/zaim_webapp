@@ -10,18 +10,18 @@
     </v-flex>
   </v-layout>
   <v-layout row wrap>
-    <datepicker label="開始" v-model="start_date" />
+    <datepicker label="開始" v-model="start_date" default="2017-01-01" />
     <v-spacer></v-spacer>
-    <datepicker label="終了" v-model="end_date" />
+    <datepicker label="終了" v-model="end_date" default="2018-12-31" />
     <v-spacer></v-spacer>
     <sync-button :start_date="start_date" :end_date="end_date" @on_sync="syncMoney" />
   </v-layout>
   <v-layout raw warp>
-    <result-table :moneys="moneys" :target="target" />
+    <result-table :income="moneys['income']" :payment="moneys['payment']" :days="moneys['days']" :target="target" />
   </v-layout>
   <br />
   <v-layout row wrap>
-    <money-table title="収入" :items="moneys['income']" :categories="categories['income']" />
+    <money-table title="収入" :items="moneys['income']" :categories="categories['income']" @modify="modifyIncome" />
     <v-spacer></v-spacer>
     <money-table title="支出" :items="moneys['payment']" :categories="categories['payment']" />
   </v-layout>
@@ -51,12 +51,23 @@ export default {
   methods: {
     syncMoney: function(moneys){
       this.moneys = moneys;
+    },
+    modifyIncome: function(updates){
+      let income = this.moneys['income'];
+      let i = 0;
+      for(let money of income) {
+        if(updates[money[0]]){
+          this.$set(this.moneys['income'][i], 1, parseInt(updates[money[0]]));
+          // this.moneys['income'][i][1] = parseInt(updates[money[0]]);
+        }
+        i++;
+      }
     }
   },
   data () {
     return {
-      start_date: null,
-      end_date: null,
+      start_date: '2017-01-01',
+      end_date: '2019-01-01',
       target: 50,
       categories: {},
       moneys: {

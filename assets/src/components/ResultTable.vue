@@ -20,19 +20,22 @@
 export default {
   name: 'resulttable',
   components: { },
-  beforeMount: function(){
-  },
+  props: ['target', 'income', 'payment', 'days'],
   methods: {
-    syncMoney: function(moneys){
-      this.moneys = moneys;
+    balance2: function(){
+      let balance = 0;
+      for(let i of this.income) {
+        balance += i[1];
+      }
+      for(let i of this.payment) {
+        balance += -i[1];
+      }
+      return balance;
     }
-  },
-  props: ['moneys', 'target'],
-  methods : {
   },
   computed: {
     get_money: function(){
-      if (this.moneys['income'] && this.moneys['income'].length > 1){
+      if (this.income && this.income.length > 1){
         return true;
       }else{
         return false;
@@ -40,16 +43,16 @@ export default {
     },
     balance: function(){
       let balance = 0;
-      for(let i of this.moneys['income']) {
-        balance += i[1]
+      for(let i of this.income) {
+        balance += i[1];
       }
-      for(let i of this.moneys['payment']) {
-        balance += -i[1]
+      for(let i of this.payment) {
+        balance += -i[1];
       }
       return balance;
     },
     road: function(){
-      let balance_per_days = this.balance/ this.moneys['days']
+      let balance_per_days = this.balance/ this.days
       return Math.round(this.target * 10000 / balance_per_days)
     },
     road_to_text: function(){
@@ -63,23 +66,23 @@ export default {
         return years + "年と"　+ days + "日"
       }
     },
-    results: function(){
-      if (!this.moneys){
-        return [];
-      }
-
-      let balance_result = {
+    results: {
+      cache: false,
+      get: function(){
+        console.log('hello');
+        let balance_result = {
+            value: false,
+            name: '指定した期間の収支',
+            text: this.balance2() + "円"
+          };
+        let road_result = {
           value: false,
-          name: '指定した期間の収支',
-          text: this.balance + "円"
+          name: 'このペースなら目標額まであと',
+          text: this.road_to_text
         };
-      let road_result = {
-        value: false,
-        name: 'このペースなら目標額まであと',
-        text: this.road_to_text
-      };
 
-      return [balance_result, road_result];
+        return [balance_result, road_result];
+      }
     }
   },
   data () {

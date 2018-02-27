@@ -41,10 +41,10 @@
 
 export default {
   name: 'picker',
-  props: ['value', 'label'],
+  props: ['value', 'label', 'default'],
   data () {
     return {
-        date: null,
+        date: this.default,
         menu: false
     }
   },

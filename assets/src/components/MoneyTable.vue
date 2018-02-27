@@ -10,8 +10,21 @@
    >
      <template slot="items" slot-scope="props">
        <td>{{ props.item.category.name }}</td>
-       <td class="text-xs-right">{{ props.item.amount }}円</td>
-       <td class="text-xs-right">{{ props.item[1] }}</td>
+       <td class="text-xs-right">
+         <v-edit-dialog
+           :return-value.sync="items_for_modify[props.item.id]"
+           lazy
+         > {{ props.item.amount }}
+           <v-text-field
+             slot="input"
+             label="Edit"
+             v-model="props.item.amount"
+             single-line
+             counter
+           ></v-text-field>
+          </v-edit-dialog>
+       </td>
+       <td class="text-xs-right">todo</td>
      </template>
   </v-data-table>
   </v-flex>
@@ -23,6 +36,7 @@ export default {
   props: ['value', 'title', 'items', 'categories'],
   data () {
     return {
+      items_for_modify: {},
       headers: [
                 {
                   text: this.title,
@@ -35,11 +49,16 @@ export default {
               ]
     }
   },
+  watch: {
+    items_for_modify: function(val){
+      this.$emit('modify', val);
+    }
+  },
   computed: {
      item_with_name: function () {
        let result = [];
        for(let i of this.items) {
-         result.push({'id': i[0], 'amount': i[1], 'category': this.categories[i[0]] })
+         result.push({'id': i[0], 'amount': i[1], 'category': this.categories[i[0]]});
        }
        return result;
      }
