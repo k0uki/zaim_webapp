@@ -5,6 +5,7 @@ GEM
     multi_json (1.13.1)
     mustermann (1.0.2)
     oauth (0.5.4)
+    puma (3.11.2)
     rack (2.0.4)
     rack-protection (2.0.1)
       rack
@@ -27,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   oauth
+  puma
   sinatra
   sinatra-contrib
 
