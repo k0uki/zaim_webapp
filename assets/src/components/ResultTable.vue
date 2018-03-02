@@ -71,7 +71,7 @@ export default {
         let balance_result = {
             value: false,
             name: '指定した期間の収支',
-            text: this.balance + "円"
+            text: this.balance/10000 + "万円"
           };
         let road_result = {
           value: false,
