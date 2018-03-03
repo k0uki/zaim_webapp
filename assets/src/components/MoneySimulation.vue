@@ -6,6 +6,7 @@
         label="目標"
         v-model="target"
         suffix="万円"
+        type="number"
       ></v-text-field>
     </v-flex>
   </v-layout>
