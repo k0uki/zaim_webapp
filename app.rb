@@ -8,11 +8,8 @@ set :session_secret, '4d939250c8b435ddd88a6855b46e38c72af48b02f7bee5eafddcb10377
 set :public_folder, File.dirname(__FILE__) + '/public'
 
 get '/' do
-  if authorize?
-    erb :index
-  else
-    "please auth from zaim at /auth"
-  end
+  @logged_in = authorize?
+  erb :index
 end
 
 get '/zaim/money' do
