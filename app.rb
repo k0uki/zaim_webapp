@@ -22,10 +22,11 @@ end
 get '/auth' do
   set_consumer
   api_config = settings.zaim_api
-  request_token = @consumer.get_request_token(oauth_callback: api_config['callback_url'])
+  callback_url = File.join(request.url, "/callback")
+  request_token = @consumer.get_request_token(oauth_callback: callback_url)
   session[:request_token] = request_token.token
   session[:request_secret] = request_token.secret
-  redirect to(request_token.authorize_url(:oauth_callback => api_config['callback_url']))
+  redirect to(request_token.authorize_url(:oauth_callback => callback_url))
 end
 
 get '/auth/callback' do
