@@ -38,6 +38,7 @@ get '/auth/callback' do
     set_consumer
     @request_token = OAuth::RequestToken.new(@consumer, session[:request_token], session[:request_secret])
     access_token = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+
     session[:access_token] = access_token.token
     session[:access_secret] = access_token.secret
     redirect to('/')
