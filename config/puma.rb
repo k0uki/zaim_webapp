@@ -1,2 +1,2 @@
-threads 5, 5
+threads 1, 1
 workers 1

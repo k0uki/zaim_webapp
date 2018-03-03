@@ -1,11 +1,8 @@
-CONSUMER_KEY = '1153a3e38a00db982e9f93ed7799362f93720278'
-CONSUMER_SECRET = 'b2b2bf024d6132b7d784126733ea71ef9f9b303e'
-CALLBACK_URL = 'http://localhost:9292/auth/callback'
-API_URL = 'https://api.zaim.net/v2/'
 
 enable :sessions
 set :session_secret, '4d939250c8b435ddd88a6855b46e38c72af48b02f7bee5eafddcb103779aec732b0244f0f1e761bb6dd65e90be4e7ed08a62bc112324f75528af479ca84174ae'
 set :public_folder, File.dirname(__FILE__) + '/public'
+config_file File.dirname(__FILE__) + '/config/app.yml'
 
 get '/' do
   @logged_in = authorize?
@@ -24,10 +21,11 @@ end
 
 get '/auth' do
   set_consumer
-  request_token = @consumer.get_request_token(oauth_callback: CALLBACK_URL)
+  api_config = settings.zaim_api
+  request_token = @consumer.get_request_token(oauth_callback: api_config['callback_url'])
   session[:request_token] = request_token.token
   session[:request_secret] = request_token.secret
-  redirect to(request_token.authorize_url(:oauth_callback => CALLBACK_URL))
+  redirect to(request_token.authorize_url(:oauth_callback => api_config['callback_url']))
 end
 
 get '/auth/callback' do
@@ -51,8 +49,9 @@ end
 
 private
 def set_consumer
-  @consumer = OAuth::Consumer.new(CONSUMER_KEY, CONSUMER_SECRET,
-    site: 'https://api.zaim.net',
+  api_config = settings.zaim_api
+  @consumer = OAuth::Consumer.new(ENV['ZAIM_KEY'], ENV['ZAIM_SECRET'],
+    site: api_config['site'],
     request_token_path: '/v2/auth/request',
     authorize_url: 'https://auth.zaim.net/users/auth',
     access_token_path: '/v2/auth/access')
@@ -67,7 +66,7 @@ def zaim_client
 end
 
 def fetch_category
-  m = zaim_client.get("#{API_URL}home/category")
+  m = zaim_client.get("#{settings.zaim_api['site']}/v2/home/category")
   res = JSON.parse(m.body)
   payment = {}
   res['categories'].select{|r|r['mode'] == 'payment'}.each do |r|
@@ -85,7 +84,7 @@ def fetch_money_by_genre
   income = {}
 
   q_p = {group_by: 'receipt_id', start_date: params[:start_date], end_date: params[:end_date]}
-  m = zaim_client.get("#{API_URL}home/money?#{URI.encode_www_form(q_p)}")
+  m = zaim_client.get("#{settings.zaim_api['site']}/v2/home/money?#{URI.encode_www_form(q_p)}")
   res = JSON.parse(m.body)
 
   if res['money'].count < 1

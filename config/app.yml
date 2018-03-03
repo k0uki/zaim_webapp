@@ -1,0 +1,4 @@
+zaim_api:
+  site: 'https://api.zaim.net'
+  end_point: 'https://api.zaim.net/v2'
+  callback_url: 'http://localhost:9292/auth/callback'
