@@ -32,7 +32,7 @@
          <strong>合計</strong>
        </td>
        <td colspan=2>
-         <span>{{total_amount}}円</span>
+         <span>{{total_amount / 10000 }}万円</span>
        </td>
      </template>
   </v-data-table>
@@ -46,6 +46,7 @@ export default {
   methods: {
     update_money: function(id, event){
       this.$set(this.items_for_modify, id, event.target.value);
+      this.$emit('modify', this.items_for_modify);
     },
     total_per: function(amount){
       let actual = (amount / this.total_amount) * 100;
@@ -67,11 +68,6 @@ export default {
                 },
                 { text: '割合', value: 'amount' },
               ]
-    }
-  },
-  watch: {
-    items_for_modify: function(val){
-      this.$emit('modify', val);
     }
   },
   computed: {

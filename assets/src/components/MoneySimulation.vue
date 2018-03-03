@@ -78,19 +78,7 @@ export default {
       moneys: {
         'payment': [],
         'income': []
-      },
-     results: [
-                {
-                  value: false,
-                  name: '収支',
-                  text: "+ ５万円"
-                },
-                {
-                  value: false,
-                  name: 'このペースなら目標額まであと',
-                  text: '10日'
-                }
-    ]
+      }
     }
   }
 }
